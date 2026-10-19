@@ -1,0 +1,83 @@
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+# Игнорируем всю папку .idea
+.idea/*
+
+# Но оставляем то, что хотим шарить с командой
+!.idea/inspectionProfiles/
+!.idea/codeStyles/
+!.idea/dictionaries/
+
+# Внутри оставленных папок явно разрешаем содержимое
+!.idea/inspectionProfiles/*.xml
+!.idea/codeStyles/*.xml
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Выпуск обновлений ###
+# Временная копия каталога для release.sh. Скрипт достаёт предыдущую
+# версию из git и кладёт во временный файл, но если сравниваешь руками —
+# копия оседает в корне. В коммит ей не место: это снимок состояния,
+# а не исходник.
+catalog-before.json
+
+### Hammerhall CLI ###
+# Клиент живёт внутри кузницы, и его рабочая папка — тоже.
+#
+# ⚠️ Игнорируем ТОЧЕЧНО, а не всю .hammerhall/: там лежит файл forge
+# с идентификатором кузницы, и он ОБЯЗАН приезжать пользователю вместе
+# с репозиторием. Без него клиент берёт имя каталога, которое человек
+# мог поменять при клонировании, и отправит решение не в ту кузницу.
+
+# Токен доступа. Форки часто публичные — утечёт вместе с репозиторием.
+.hammerhall/config
+
+# Сам клиент: обёртка качает его с Releases при первом запуске.
+# Бинарник в истории git остаётся навсегда и раздувает клон с каждой версией.
+.hammerhall/*.jar
+.hammerhall/*.jar.part
+
+### Аварийные дампы JVM ###
+# Падение JVM оставляет в корне файл на десятки мегабайт. Конвейеры кузницы
+# компилируют и гоняют чужой код, так что это не редкость.
+hs_err_pid*
+replay_pid*
+*.hprof
+
+### Логи ###
+*.log
+
+### Операционные системы ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python: кеш байткода. exam-release.py грузит стриппер модулем,
+# и Python кладёт рядом scripts/__pycache__/ — не исходник.
+__pycache__/

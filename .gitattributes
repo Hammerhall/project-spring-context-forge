@@ -1,0 +1,43 @@
+# Кузница правится на Windows (MINGW64), а исполняется на Linux (GitHub Actions).
+# core.autocrlf там по умолчанию true, поэтому без этого файла окончания строк
+# зависят от того, чей чекаут — и состояние недетерминированное.
+#
+# Так было в Stream Forge: закрытые тесты вперемешку LF и CRLF, strip-for-open.py
+# и два workflow — CRLF. Пронесло случайно: .sh оказались с LF. Будь там CRLF,
+# bash сказал бы «bad interpreter: /bin/bash^M» и публикация не стартовала бы.
+#
+# prepare-open.sh кладёт этот файл и в публичный репозиторий: ученику на Windows
+# он нужен ради клиента — ниже.
+
+# --- исполняемое: LF обязателен, иначе не запустится на Linux ---
+*.sh    text eol=lf
+*.py    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+
+# --- исходники и документы: нормализуем в репозитории ---
+*.java  text
+*.xml   text
+*.md    text
+*.json  text
+*.jsonl text eol=lf
+*.conf  text eol=lf
+*.properties text
+
+# --- клиент Hammerhall: у каждой обёртки свои переносы ---
+# Обёртка для bash без расширения — правило *.sh её не ловит. С CRLF Git Bash
+# скажет «/usr/bin/env: 'bash\r'» и ни одно решение не уйдёт.
+hammerhall      text eol=lf
+cli/hammerhall  text eol=lf
+# cmd.exe с переносами LF теряет метки: «call :download» не находит :download,
+# когда метка попадает на границу его 512-байтного буфера.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# --- двоичное: не трогать никогда ---
+# Датасет — gzip. Нормализация переносов испортила бы архив молча.
+*.gz    binary
+*.jar   binary
+*.zip   binary
+*.png   binary
+*.jpg   binary
