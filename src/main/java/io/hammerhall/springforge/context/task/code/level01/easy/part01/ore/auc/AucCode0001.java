@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Задание: Каталог открывается.
  * <p>
- * Описание: аукционный дом готовит сегодняшние торги. Объявите в {@link Config} бин каталога
+ * Описание: аукционный дом готовит сегодняшние торги. Объяви в {@link Config} бин каталога
  * лотов {@link LotCatalog}: сам каталог даёт {@code SampleLots.today()}. Каталог — это список
  * лотов: номер, название, стартовая цена.
  */
-@DisplayName("Задание: Каталог открывается.")
+@DisplayName("Каталог открывается")
 public class AucCode0001 {
 
     @Configuration

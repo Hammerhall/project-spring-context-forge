@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
  *   <li>поднять второй контекст из {@code Config};</li>
  *   <li>дважды попросить каталог у второго.</li>
  * </ol>
- * Ответьте, <b>не запуская</b> сценарий, — запустить и списать можно, но тогда задача ничему
- * не научит. Верните в {@link Answer}:
+ * Ответь, <b>не запуская</b> сценарий, — запустить и списать можно, но тогда задача ничему
+ * не научит. Верни в {@link Answer}:
  * <ul>
  *   <li>{@code births} — сколько раз за сценарий родился каталог;</li>
  *   <li>{@code bornBeforeFirstRequest} — родился ли каталог первого контекста раньше, чем его
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  *       два контекста, ни разу не попросив каталог.</li>
  * </ul>
  */
-@DisplayName("Задание: Счётчик в каталоге.")
+@DisplayName("Счётчик в каталоге")
 public class AucMind0001 {
 
     /** Дано: каталог, который считает свои рождения. */
@@ -55,7 +55,7 @@ public class AucMind0001 {
     public static class Config {
 
         @Bean
-        public LotCatalog lotCatalog() {
+        public CountingCatalog lotCatalog() {
             return new CountingCatalog();
         }
     }
@@ -64,7 +64,7 @@ public class AucMind0001 {
     public record Answer(int births, boolean bornBeforeFirstRequest, int birthsWithoutRequests) {
     }
 
-    /** Ваш ответ — данными, без запуска сценария. */
+    /** Твой ответ — данными, без запуска сценария. */
     public static Answer task() {
         throw new UnsupportedOperationException("Реализуйте метод");
     }
@@ -73,6 +73,6 @@ public class AucMind0001 {
     void runTask() {
         IO.println("Это вывод, а не проверка. Проверить решение: ./hammerhall submit AucMind0001");
 
-        IO.println("Ваш ответ: " + task());
+        IO.println("Твой ответ: " + task());
     }
 }

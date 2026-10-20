@@ -7,7 +7,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -15,26 +14,26 @@ import org.springframework.context.annotation.Configuration;
  * <p>
  * Описание: печатный каталог для зала {@link CatalogPrint} ищут в контексте по имени: отдел
  * каталогов — по имени {@code hallPrint}, старый отчёт — по имени {@code printedCatalog}.
- * Объявите в {@link Config} печатный каталог так, чтобы он находился по обоим именам. Каталог
- * лотов в {@code Config} уже есть — печатный каталог печатается с него.
+ * Объяви в {@link Config} печатный каталог так, чтобы он находился по обоим именам.
+ * <p>
+ * Каталог лотов {@link LotCatalog} даёт окружение — печатный каталог печатается с него.
  */
-@DisplayName("Задание: Старый отчёт ищет печать.")
+@DisplayName("Старый отчёт ищет печать")
 public class AucCode0008 {
 
     @Configuration
     public static class Config {
-
-        @Bean
-        public LotCatalog lotCatalog() {
-            return SampleLots.today();
-        }
     }
 
     @Test
     void runTask() {
         IO.println("Это вывод, а не проверка. Проверить решение: ./hammerhall submit AucCode0008");
 
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class)) {
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            context.registerBean(LotCatalog.class, SampleLots::today);   // каталог окружения
+            context.register(Config.class);
+            context.refresh();
+
             for (String name : context.getBeanNamesForType(CatalogPrint.class)) {
                 IO.println("Бин «" + name + "», ещё зовётся " + Arrays.toString(context.getAliases(name)));
             }

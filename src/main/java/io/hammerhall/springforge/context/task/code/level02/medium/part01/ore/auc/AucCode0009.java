@@ -2,11 +2,9 @@ package io.hammerhall.springforge.context.task.code.level02.medium.part01.ore.au
 
 import io.hammerhall.springforge.auction.Lot;
 import io.hammerhall.springforge.auction.LotCatalog;
-import io.hammerhall.springforge.auction.SampleLots;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -14,21 +12,15 @@ import org.springframework.context.annotation.Configuration;
  * <p>
  * Описание: утром продавец принёс ещё один лот — «Серебряный подстаканник, 1910-е», номер
  * {@code L-104}, стартовая цена 6 000 ₽. Каталог дня — лоты {@code SampleLots.today()} в том же
- * порядке и новый лот последним. Соберите такой каталог в бине {@link LotCatalog}.
+ * порядке и новый лот последним. Объяви в {@link Config} бин {@link LotCatalog} с таким каталогом.
  * <p>
  * Лоты — данные, а не бины: служб «лот» в контексте быть не должно.
  */
-@DisplayName("Задание: Серебряный подстаканник.")
+@DisplayName("Серебряный подстаканник")
 public class AucCode0009 {
 
     @Configuration
     public static class Config {
-
-        /** Пока — вчерашний каталог: только лоты {@code SampleLots.today()}. */
-        @Bean
-        public LotCatalog lotCatalog() {
-            return SampleLots.today();
-        }
     }
 
     @Test

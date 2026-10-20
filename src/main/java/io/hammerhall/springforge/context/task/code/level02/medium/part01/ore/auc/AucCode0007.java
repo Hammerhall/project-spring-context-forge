@@ -4,54 +4,30 @@ import io.hammerhall.springforge.auction.AuctionClock;
 import io.hammerhall.springforge.auction.AuctionJournal;
 import io.hammerhall.springforge.auction.BidRejectedException;
 import io.hammerhall.springforge.auction.BidRules;
+import io.hammerhall.springforge.auction.FixedStepRules;
 import io.hammerhall.springforge.auction.Lot;
 import io.hammerhall.springforge.auction.MemoryJournal;
 import io.hammerhall.springforge.auction.Money;
 import io.hammerhall.springforge.auction.SampleLots;
-import io.hammerhall.springforge.auction.StepSettings;
 import io.hammerhall.springforge.auction.SystemClock;
-import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 /**
  * Задание: Служба ставок.
  * <p>
  * Описание: служба ставок {@link BidService} принимает ставку на лот. Ставка не ниже минимума
- * по правилам шага — принята: служба пишет в журнал торгов запись
+ * по правилам ставок {@link BidRules} — принята: служба пишет в журнал торгов запись
  * {@code JournalEntry.bid(время, лот, ставка)}, время — по часам торгов. Ставка ниже минимума —
  * {@link BidRejectedException} с этой ставкой и минимумом, журнал не трогается.
  * <p>
- * Правила шага {@link StepRules} уже готовы. Журнал торгов, часы и шаг даёт окружение — свои
- * не создавайте. Допишите службу и сделайте её бином контекста из {@link Config}.
+ * Правила ставок, журнал торгов и часы даёт окружение — свои не создавай. Допиши службу.
+ * В контекст её кладёт проверка — так же, как это сделало бы сканирование компонентов.
  */
-@DisplayName("Задание: Служба ставок.")
+@DisplayName("Служба ставок")
 public class AucCode0007 {
-
-    @Configuration
-    @Import(StepRules.class)
-    public static class Config {
-    }
-
-    /** Дано: правила шага из задачи «Шаг ставки». */
-    @Component
-    public static class StepRules implements BidRules {
-
-        private final StepSettings settings;
-
-        public StepRules(StepSettings settings) {
-            this.settings = Objects.requireNonNull(settings, "settings");
-        }
-
-        @Override
-        public Money minimumNext(Money current) {
-            return current.plus(settings.step());
-        }
-    }
 
     @Component
     public static class BidService {
@@ -62,7 +38,7 @@ public class AucCode0007 {
          * @param lot     лот, за который торгуются
          * @param current текущая цена лота
          * @param amount  ставка
-         * @throws BidRejectedException ставка меньше минимума по правилам шага
+         * @throws BidRejectedException ставка меньше минимума по правилам ставок
          */
         public void accept(Lot lot, Money current, Money amount) {
             throw new UnsupportedOperationException("Реализуйте метод");
@@ -75,10 +51,10 @@ public class AucCode0007 {
 
         MemoryJournal journal = new MemoryJournal();
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            context.registerBean(StepSettings.class, () -> new StepSettings(Money.rubles(500)));   // окружение:
-            context.registerBean(AuctionJournal.class, () -> journal);                             // шаг, журнал
-            context.registerBean(AuctionClock.class, SystemClock::new);                            // и часы
-            context.register(Config.class);
+            context.registerBean(BidRules.class, () -> new FixedStepRules(Money.rubles(500)));   // окружение:
+            context.registerBean(AuctionJournal.class, () -> journal);                           // правила, журнал
+            context.registerBean(AuctionClock.class, SystemClock::new);                          // и часы
+            context.register(BidService.class);                                                  // как сканирование
             context.refresh();
 
             BidService bids = context.getBean(BidService.class);

@@ -1,13 +1,12 @@
 package io.hammerhall.springforge.context.task.code.level02.medium.part02.anvil.auc;
 
-import io.hammerhall.springforge.auction.AuctionClock;
-import io.hammerhall.springforge.auction.AuctionHouse;
 import io.hammerhall.springforge.auction.AuctionJournal;
-import io.hammerhall.springforge.auction.CatalogPrint;
-import io.hammerhall.springforge.auction.LotCatalog;
+import io.hammerhall.springforge.auction.BidBoard;
+import io.hammerhall.springforge.auction.BidRules;
+import io.hammerhall.springforge.auction.FixedStepRules;
 import io.hammerhall.springforge.auction.MemoryJournal;
-import io.hammerhall.springforge.auction.SampleLots;
-import io.hammerhall.springforge.auction.SystemClock;
+import io.hammerhall.springforge.auction.Money;
+import io.hammerhall.springforge.auction.StepSettings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,31 +14,31 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Задание: Отдел каталогов.
+ * Задание: Правила дома.
  * <p>
- * Описание: дом собирается из двух конфигураций. {@link CatalogConfig} — отдел каталогов:
- * каталог лотов и печатный каталог для зала, они уже объявлены. {@link HallConfig} — зал:
- * журнал торгов уже есть, допишите дом {@link AuctionHouse}. Проверка поднимает контекст
- * только из {@code HallConfig} — из него должны подняться все бины, а у дома и печатного
- * каталога должен быть один каталог.
+ * Описание: дом собирается из двух конфигураций. {@link RulesConfig} — отдел торгов: шаг ставки
+ * и правила ставок, они уже объявлены. {@link HallConfig} — зал: журнал торгов уже есть, допиши
+ * табло ставок {@link BidBoard} — оно показывает, какую ставку примут следующей, по правилам
+ * отдела торгов.
  * <p>
- * Часы для дома даёт окружение.
+ * Проверка поднимает контекст только из {@code HallConfig}. Из него должны подняться все бины
+ * обеих конфигураций, и у каждого бина — одно место.
  */
-@DisplayName("Задание: Отдел каталогов.")
+@DisplayName("Правила дома")
 public class AucCode0010 {
 
-    /** Отдел каталогов. */
+    /** Отдел торгов. */
     @Configuration
-    public static class CatalogConfig {
+    public static class RulesConfig {
 
         @Bean
-        public LotCatalog lotCatalog() {
-            return SampleLots.today();
+        public StepSettings stepSettings() {
+            return new StepSettings(Money.rubles(500));
         }
 
         @Bean
-        public CatalogPrint catalogPrint(LotCatalog lotCatalog) {
-            return new CatalogPrint(lotCatalog);
+        public BidRules bidRules(StepSettings settings) {
+            return new FixedStepRules(settings.step());
         }
     }
 
@@ -48,7 +47,7 @@ public class AucCode0010 {
     public static class HallConfig {
 
         @Bean
-        public AuctionJournal auctionJournal() {
+        public AuctionJournal hallJournal() {
             return new MemoryJournal();
         }
     }
@@ -57,15 +56,9 @@ public class AucCode0010 {
     void runTask() {
         IO.println("Это вывод, а не проверка. Проверить решение: ./hammerhall submit AucCode0010");
 
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            context.registerBean(AuctionClock.class, SystemClock::new);   // часы окружения
-            context.register(HallConfig.class);                           // только зал
-            context.refresh();
-
-            AuctionHouse house = context.getBean(AuctionHouse.class);
-            CatalogPrint print = context.getBean(CatalogPrint.class);
-            print.lines().forEach(IO::println);
-            IO.println("Каталог у дома и у печати — один объект: " + (house.catalog() == print.catalog()));
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(HallConfig.class)) {
+            BidBoard board = context.getBean(BidBoard.class);
+            IO.println("Табло: " + board.show(Money.rubles(18_000)));
         }
     }
 }

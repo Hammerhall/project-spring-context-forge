@@ -13,13 +13,13 @@ import org.springframework.context.annotation.Configuration;
  * Задание: Каталог для зала.
  * <p>
  * Описание: каталог лотов нужен двоим — дому {@link AuctionHouse} и печатному каталогу
- * для зала {@link CatalogPrint}. Объявите в {@link Config} три бина — каталог из
+ * для зала {@link CatalogPrint}. Объяви в {@link Config} три бина — каталог из
  * {@code SampleLots.today()}, дом и печатный каталог — так, чтобы дом и печатный каталог
  * получили <b>один и тот же</b> каталог: напечатано должно быть ровно то, что продаёт дом.
  * <p>
  * Часы для дома даёт окружение.
  */
-@DisplayName("Задание: Каталог для зала.")
+@DisplayName("Каталог для зала")
 public class AucCode0003 {
 
     @Configuration
